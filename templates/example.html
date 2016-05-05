@@ -1,0 +1,113 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <title>TalData</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="//code.highcharts.com/highcharts.js"></script>
+    <script src="//code.highcharts.com/modules/exporting.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<script type="application/javascript">
+    function convertToMillisec(dateString){
+        return Date.parse(dateString);
+    }
+    var dataList = {{json_data|raw}};
+    
+    $( document ).ready(function() {
+        var dates= [];
+        var balances = [];
+        for(row in dataList){
+            dates.push(convertToMillisec(dataList[row].fetched_at));
+            balances.push(parseFloat(dataList[row].balance));
+        }
+        $('#container').highcharts({
+            title: {
+                text: 'Tallinja Details for card #{{card}}'
+            },
+            xAxis: {
+                type: 'datetime',
+                labels: {
+                    formatter: function() {
+                        return Highcharts.dateFormat('%a %d %b', this.value);
+                    }
+                },
+                categories: dates
+            },
+            series: [{
+                name: "card #{{card}}",
+                data: balances
+            }]
+        });
+    });
+</script>
+
+<body>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1>Tallinja data for # {{card}} </h1></div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Balance</th>
+                        <th>Fetched At</th>
+                    </thead>
+                    {% for row in results %}
+                    <tr>
+                        <td>{{row.balance}}</td>
+                        <td>{{row.fetched_at}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+        <div id="container" style="min-width: 300px; height: 300px; margin: 1em"></div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1>Random Talljnia data</h1></div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Card #</th>
+                        <th>Balance</th>
+                        <th>Fetched At</th>
+                    </thead>
+                    {% for row in randoms %}
+                    <tr>
+                        <td><a href="./?c={{row.card_number}}">{{row.card_number}}</a></td>
+                        <td>{{row.balance}}</td>
+                        <td>{{row.fetched_at}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1>Richest Tallinja data</h1></div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <th>Card #</th>
+                        <th>Balance</th>
+                        <th>Fetched At</th>
+                    </thead>
+                    <tr>
+                        <td>{{highest.card_number}}</td>
+                        <td>{{highest.balance}}</td>
+                        <td>{{highest.fetched_at}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+<html>
