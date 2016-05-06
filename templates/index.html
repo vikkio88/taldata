@@ -10,6 +10,26 @@
     <link rel="stylesheet" href="assets/css/search.css?v={{css_version}}" type="text/css">
 </head>
 <script type="application/javascript">
+    function onReady(callback) {
+        var intervalID = window.setInterval(checkReady, 1000);
+
+        function checkReady() {
+            if (document.getElementsByTagName('body')[0] !== undefined) {
+                window.clearInterval(intervalID);
+                callback.call(this);
+            }
+        }
+    }
+
+    function show(id, value) {
+        document.getElementById(id).style.display = value ? 'block' : 'none';
+    }
+
+    onReady(function () {
+        show('container', true);
+        show('loading', false);
+    });
+    
     $(function () {
         $('a[href="#search"]').on('click', function(event) {
             event.preventDefault();
@@ -170,5 +190,6 @@
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
     </div>
+    <div id="loading"></div>
 </body>
 <html>
